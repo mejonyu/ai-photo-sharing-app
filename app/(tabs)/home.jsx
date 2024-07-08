@@ -6,7 +6,7 @@ import {
   RefreshControl,
   Alert,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -21,13 +21,15 @@ import VideoCard from "../../components/VideoCard";
 const Home = () => {
   const { user } = useGlobalContext();
   const [refreshing, setRefreshing] = useState(false);
-  const { data: posts, refetch } = useAppwrite(getAllPosts);
-  const { data: latestPosts } = useAppwrite(getLatestPosts);
+  const { data: posts, refetch: refetchAllPosts } = useAppwrite(getAllPosts);
+  const { data: latestPosts, refetch: refetchLatestPosts } =
+    useAppwrite(getLatestPosts);
 
   const onRefresh = async () => {
     setRefreshing(true);
     try {
-      await refetch();
+      await refetchAllPosts();
+      await refetchLatestPosts();
     } catch (error) {
       console.log(error);
     }
@@ -48,7 +50,7 @@ const Home = () => {
                   Welcome Back
                 </Text>
                 <Text className="text-2xl font-psemibold text-white">
-                  {user.username}
+                  {user?.username}
                 </Text>
               </View>
               <View className="mt-1.5">
